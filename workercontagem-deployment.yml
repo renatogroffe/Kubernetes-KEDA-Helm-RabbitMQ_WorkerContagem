@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: workercontagem
+spec:
+  selector:
+    matchLabels:
+      app: workercontagem
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: workercontagem
+    spec:
+      containers:
+      - name: workercontagem
+        image: renatogroffe/workercontagemrabbitmq:1
+        env:
+        - name: RabbitMQ__Queue
+          value: queue-testes
+        - name: RabbitMQ__ConnectionString
+          valueFrom:
+            secretKeyRef:
+              name: workercontagemsecret
+              key: ConnectionRabbitMQ
+        - name: ConnectionStrings__BaseContagem
+          valueFrom:
+            secretKeyRef:
+              name: workercontagemsecret
+              key: ConnectionSqlServer
